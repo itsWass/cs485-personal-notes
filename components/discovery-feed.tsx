@@ -2,9 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { ResourceCard } from "@/components/resource-card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, Sparkles, Code2, Video, Newspaper } from "lucide-react";
+import { RefreshCw, Sparkles, Code2, Video, Newspaper } from "lucide-react";
 
 interface FeedItem {
   id: string;
@@ -16,9 +14,29 @@ interface FeedItem {
   source: string;
   concepts: string[];
   relevance: number;
+  stars?: string;
 }
 
 type FilterType = "all" | "github" | "youtube" | "articles";
+
+function SkeletonCard() {
+  return (
+    <div
+      className="rounded-lg overflow-hidden"
+      style={{ background: "oklch(0.12 0.01 260)", border: "1px solid oklch(0.22 0.01 260)" }}
+    >
+      <div
+        className="shimmer"
+        style={{ height: 140 }}
+      />
+      <div className="p-3.5 flex flex-col gap-2">
+        <div className="shimmer rounded h-3" style={{ width: "60%" }} />
+        <div className="shimmer rounded h-2.5" style={{ width: "90%" }} />
+        <div className="shimmer rounded h-2.5" style={{ width: "75%" }} />
+      </div>
+    </div>
+  );
+}
 
 export function DiscoveryFeed() {
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -51,66 +69,92 @@ export function DiscoveryFeed() {
     return true;
   });
 
-  const filters: { key: FilterType; label: string; icon: React.ReactNode }[] =
-    [
-      { key: "all", label: "All", icon: <Sparkles className="w-3 h-3" /> },
-      { key: "github", label: "GitHub", icon: <Code2 className="w-3 h-3" /> },
-      { key: "youtube", label: "YouTube", icon: <Video className="w-3 h-3" /> },
-      { key: "articles", label: "Articles", icon: <Newspaper className="w-3 h-3" /> },
-    ];
+  const filters: { key: FilterType; label: string; icon: React.ReactNode }[] = [
+    { key: "all", label: "All", icon: <Sparkles className="w-3 h-3" /> },
+    { key: "github", label: "GitHub", icon: <Code2 className="w-3 h-3" /> },
+    { key: "youtube", label: "YouTube", icon: <Video className="w-3 h-3" /> },
+    { key: "articles", label: "Articles", icon: <Newspaper className="w-3 h-3" /> },
+  ];
 
   return (
     <div className="space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
+        <div className="flex items-center gap-2.5">
+          <Sparkles className="w-5 h-5" style={{ color: "oklch(0.65 0.25 25)" }} />
           <h2 className="text-lg font-bold">Discovery Feed</h2>
-          <Badge variant="secondary" className="text-xs">
+          <span
+            className="text-[11px] px-2 py-0.5 rounded-full font-medium"
+            style={{ background: "oklch(0.18 0.01 260)", color: "oklch(0.60 0 0)" }}
+          >
             {items.length} resources
-          </Badge>
+          </span>
         </div>
-        <Button variant="ghost" size="sm" onClick={load} disabled={loading}>
-          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-        </Button>
+        <button
+          onClick={() => { setLoading(true); load(); }}
+          title="Refresh"
+          className="flex items-center p-1.5 rounded-md transition-all cursor-pointer"
+          style={{
+            background: "transparent",
+            border: "1px solid oklch(0.22 0.01 260)",
+            color: "oklch(0.60 0 0)",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "oklch(0.26 0.01 260)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "oklch(0.22 0.01 260)"; }}
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+        </button>
       </div>
 
+      {/* Filters */}
       <div className="flex gap-2">
         {filters.map((f) => (
-          <Button
+          <button
             key={f.key}
-            variant={filter === f.key ? "default" : "secondary"}
-            size="sm"
             onClick={() => setFilter(f.key)}
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-all"
+            style={{
+              border: `1px solid ${filter === f.key ? "oklch(0.65 0.25 25)" : "oklch(0.22 0.01 260)"}`,
+              background: filter === f.key ? "oklch(0.65 0.25 25)" : "oklch(0.18 0.01 260)",
+              color: filter === f.key ? "oklch(0.98 0 0)" : "oklch(0.60 0 0)",
+            }}
           >
             {f.icon}
             {f.label}
-          </Button>
+          </button>
         ))}
       </div>
 
+      {/* Content */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">
-            Loading your feed...
-          </p>
+        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
-          <Sparkles className="w-12 h-12 text-muted-foreground/30" />
-          <p className="font-medium text-muted-foreground">
+          <Sparkles className="w-10 h-10 opacity-20" />
+          <p className="font-medium" style={{ color: "oklch(0.60 0 0)" }}>
             Your feed is empty
           </p>
-          <p className="text-sm text-muted-foreground/70 max-w-sm">
-            Add your first note to start discovering relevant resources,
-            tutorials, and papers tailored to your learning.
+          <p
+            className="text-sm leading-relaxed max-w-xs"
+            style={{ color: "oklch(0.45 0 0)" }}
+          >
+            Add your first note to start discovering resources tailored to your learning.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((item) => (
-            <ResourceCard key={item.id} {...item} />
+        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
+          {filtered.map((item, i) => (
+            <div
+              key={item.id}
+              className="animate-card-entrance"
+              style={{ animationDelay: `${i * 40}ms` }}
+            >
+              <ResourceCard {...item} />
+            </div>
           ))}
         </div>
       )}

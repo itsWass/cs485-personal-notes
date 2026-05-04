@@ -17,9 +17,8 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
     data: new Uint8Array(buffer),
     standardFontDataUrl,
     useWorkerFetch: false,
-    isEvalSupported: false,
     useSystemFonts: true,
-  });
+  } as Parameters<typeof pdfjsLib.getDocument>[0]);
 
   const pdf = await loadingTask.promise;
   const pages: string[] = [];
