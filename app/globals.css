@@ -95,13 +95,50 @@
   }
 }
 
+@keyframes conceptPop {
+  0% { opacity: 0; transform: scale(0.7) translateY(4px); }
+  60% { transform: scale(1.06) translateY(-1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sidebarSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-slide-in {
+  animation: fadeSlideIn 0.28s ease both;
+}
+
+.animate-card-entrance {
+  animation: cardEntrance 0.3s ease both;
+}
+
+.animate-sidebar-slide {
+  animation: sidebarSlide 0.22s ease both;
+}
+
+.concept-pop {
+  animation: conceptPop 0.35s ease both;
+}
+
 .feed-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.15s ease;
 }
 
 .feed-card:hover {
   transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 40px oklch(0 0 0 / 50%);
+  box-shadow: 0 20px 40px oklch(0 0 0 / 55%);
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -129,4 +166,15 @@
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background-color: oklch(0.30 0.01 260);
   border-radius: 9999px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, oklch(0.16 0.01 260) 25%, oklch(0.19 0.01 260) 50%, oklch(0.16 0.01 260) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
 }
