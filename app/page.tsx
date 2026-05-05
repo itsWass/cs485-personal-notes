@@ -190,7 +190,6 @@ export default function Home() {
               style={{
                 color: activeTab === t.id ? "oklch(0.98 0 0)" : "oklch(0.60 0 0)",
                 fontWeight: activeTab === t.id ? 600 : 400,
-                borderBottom: `2px solid ${activeTab === t.id ? "oklch(0.65 0.25 25)" : "transparent"}`,
                 marginBottom: -1,
                 border: "none",
                 borderBottomStyle: "solid",
